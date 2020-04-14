@@ -16,8 +16,11 @@ import getopt
 import random
 import requests
 from monitoring import prometheus
+import logging
 
 now_datetime = datetime.datetime.now()
+
+logger = logging.getLogger(__name__)
 
 mon = prometheus()
 mon.monitoring_port = "19091"
@@ -67,6 +70,7 @@ def usage():
   --nexus_host      Default:  ONLY DEFAULT
   --nexus_port      Default: 443 ONLY DEFAULT
   --nexus_base_url  Default: /nexus/service/local/repositories/ ONLY DEFAULT
+  --debug           Debug output
 """)
 
 def main(argv):
@@ -80,10 +84,24 @@ def main(argv):
   delete_errors = GLOBAL_DELETE_ERRORS
   format_args = {"instance": mon.GetInstance(), "repo": ""}
   try:
-    opts, args = getopt.getopt(argv,"edhclr:",["nexus_host=", "nexus_port=", "nexus_base_url="])
+    opts, args = getopt.getopt(argv,"edhclr:",["nexus_host=", "nexus_port=", "nexus_base_url=", "debug"])
   except getopt.GetoptError:
     usage()
     sys.exit(2)
+
+  OPTIONS = {}
+  for opt, arg in opts:
+    OPTIONS[opt.lstrip("-")] = arg
+
+  if OPTIONS["debug"]:
+    logger.setLevel(logging.DEBUG)
+    logger.debug(OPTIONS)
+  if OPTIONS.get("nexus_host", False):
+    NEXUSHOST = OPTIONS["nexus_host"]
+  if OPTIONS.get("nexus_port", False):
+    NEXUSHOST = OPTIONS["nexus_port"]
+  if OPTIONS.get("nexus_base_url", False):
+    NEXUSHOST = OPTIONS["nexus_base_url"]
 
   for opt, arg in opts:
     if opt in ("-h"):
@@ -115,6 +133,7 @@ def main(argv):
     elif opt in ("-e"):
       GLOBAL_DELETE_ERRORS = True
       delete_errors = True
+
 
   if hasattr(format_args, "repo"):
     usage()
