@@ -260,7 +260,7 @@ def delete_from_nexus(nexus_repository, items):
     service.putrequest("DELETE", url)
     service.putheader("Host", NEXUSHOST)
     #service.putheader("User-Agent", "Nexus cleaner")
-    service.putheader("User-Agent", "Risks DevOps (RisksDevOps@sberbank.ru) cleaner")
+    service.putheader("User-Agent", "DevOps (RisksDevOps@mail.ru) cleaner")
     service.putheader("Content-type", "text/html; charset=\"UTF-8\"")
     service.putheader("Authorization", "Basic %s" % auth)
     service.endheaders()
